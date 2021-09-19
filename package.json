@@ -1,0 +1,23 @@
+{
+  "name": "e-paper-manager",
+  "version": "1.0.0",
+  "description": "- 電子ペーパーを用いてスマートフォンから写真を切り替えられるデジタル写真立てを作る",
+  "scripts": {
+    "backend": "npm -prefix ./backend start",
+    "frontend": "npm -prefix ./frontend run dev",
+    "start": "npm-run-all --parallel backend frontend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WGGSH/e-paper-manager.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WGGSH/e-paper-manager/issues"
+  },
+  "homepage": "https://github.com/WGGSH/e-paper-manager#readme",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}
