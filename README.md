@@ -65,6 +65,11 @@ $ node -v
 $ sudo npm install -g vue-cli
 ```
 
+## セットアップ
+```.sh
+$ npm install
+```
+
 ## 実行方法
 ```.sh
 $ npm start
