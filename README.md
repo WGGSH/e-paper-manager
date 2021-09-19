@@ -46,3 +46,21 @@ sudo apt-get install python3-numpy
 sudo pip3 install RPi.GPIO
 sudo pip3 install spidev
 ```
+
+
+### nodejs
+```.sh
+# https://qiita.com/seibe/items/36cef7df85fe2cefa3ea
+
+$ sudo apt install -y nodejs npm
+$ sudo npm install n -g
+$ sudo n stable
+$ sudo apt purge -y nodejs npm
+$ exec $SHELL -l
+$ node -v
+```
+
+### vue-cli
+```.sh
+$ npm install -g vue-cli
+```
