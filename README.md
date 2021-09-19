@@ -62,5 +62,5 @@ $ node -v
 
 ### vue-cli
 ```.sh
-$ npm install -g vue-cli
+$ sudo npm install -g vue-cli
 ```
