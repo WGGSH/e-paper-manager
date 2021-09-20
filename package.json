@@ -4,7 +4,7 @@
   "description": "- 電子ペーパーを用いてスマートフォンから写真を切り替えられるデジタル写真立てを作る",
   "scripts": {
     "backend": "npm -prefix ./backend start",
-    "frontend": "npm -prefix ./frontend run dev",
+    "frontend": "npm -prefix ./frontend run serve",
     "start": "npm-run-all --parallel backend frontend"
   },
   "repository": {
