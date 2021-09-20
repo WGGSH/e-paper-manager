@@ -26,23 +26,46 @@ app.post('/api/clear', (req,res) => {
   })
 })
 
-const upload = multer({dest: '../pic'})
+const uploadDir = '../pic'
+const upload = multer({dest: uploadDir})
 app.post('/api/image', upload.any(), (req, res) => {
   if (isExecuting ===  true){
     res.send('api double requested')
     return;
   }
   isExecuting = true
-  // console.log(`originalname: ${req.file.originalname}`)
-  // console.log(`path: ${req.file.path}`)
-  console.log(req)
-  console.log(req.files)
+  const file = req.files[0]
+  console.log(`originalname: ${file.originalname}`)
+  console.log(`path: ${file.path}`)
 
-  let fileName = 'image.bmp'
-  let targetPath = '../pic/' + fileName
+  exec(`mv ${uploadDir}/${file.filename} ${uploadDir}/${file.originalname}`, (err, stdout, stderr) => {
+    if (err) {
+      console.log(`stderr: ${stderr}`)
+      isExecuting = false
+      return
+    }
+    console.log(`stdout: ${stdout}`)
 
-  isExecuting = false
-  res.send('api finished')
+    exec(`convert ${uploadDir}/${file.originalname} -crop 600x448+0+0 +dither -map ${uploadDir}/map.png -type truecolor ${uploadDir}/image.bmp`, (err, stdout, stderr) => {
+      if (err) {
+        console.log(`stderr: ${stderr}`)
+        isExecuting = false
+        return
+      }
+      console.log(`stdout: ${stdout}`)
+
+      exec(`sudo ../epd -i ${uploadDir}/image.bmp`, (err, stdout, stderr) => {
+        if (err) {
+          console.log(`stderr: ${stderr}`)
+          isExecuting = false
+          return
+        }
+        console.log(`stdout: ${stdout}`)
+        isExecuting = false
+        res.send('api finished')
+      })
+    })
+  })
 })
 
 app.listen(8000, () => {
