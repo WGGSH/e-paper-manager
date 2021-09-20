@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import About from '../views/About.vue'
 import Clear from '../views/Clear.vue'
+import Image from '../views/Image.vue'
 
 Vue.use(VueRouter)
 
@@ -25,7 +26,12 @@ const routes = [
     path: '/clear',
     name: 'Clear',
     component: Clear,
-  }
+  },
+  {
+    path: '/image',
+    name: 'Image',
+    component: Image,
+  },
 ]
 
 const router = new VueRouter({

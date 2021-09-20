@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const { exec } = require('child_process')
+const  multer  = require('multer')
 
 // app.get('/', (req, res) => res.send('Hello World!'))
 
@@ -25,13 +26,21 @@ app.post('/api/clear', (req,res) => {
   })
 })
 
-app.post('/api/image', (req, res) => {
+const upload = multer({dest: '../pic'})
+app.post('/api/image', upload.any(), (req, res) => {
   if (isExecuting ===  true){
     res.send('api double requested')
     return;
   }
   isExecuting = true
-  // FIXME
+  // console.log(`originalname: ${req.file.originalname}`)
+  // console.log(`path: ${req.file.path}`)
+  console.log(req)
+  console.log(req.files)
+
+  let fileName = 'image.bmp'
+  let targetPath = '../pic/' + fileName
+
   isExecuting = false
   res.send('api finished')
 })

@@ -3,9 +3,11 @@
     <header>
       <v-app-bar app dark>
         <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
-        <v-toolbar-title>
-          Title
-        </v-toolbar-title>
+        <v-btn @click="reload">
+          <v-toolbar-title>
+            Reload
+          </v-toolbar-title>
+        </v-btn>
       </v-app-bar>
       <v-navigation-drawer
         v-model="drawer"
@@ -27,9 +29,11 @@
                 <v-list-item-title>CLEAR</v-list-item-title>
               </v-list-item>
             </router-link>
-            <v-list-item>
-              <v-list-item-title>WORK</v-list-item-title>
-            </v-list-item>
+            <router-link to="/image">
+              <v-list-item>
+                <v-list-item-title>Image</v-list-item-title>
+              </v-list-item>
+            </router-link>
             <v-list-item>
               <v-list-item-title>SERVICE</v-list-item-title>
             </v-list-item>
@@ -99,7 +103,12 @@ export default {
     return {
       drawer: false,
     }
-  }
+  },
+  methods: {
+    reload: () => {
+      location.reload()
+    }
+  },
   // data: () => ({
   // }),
 };
