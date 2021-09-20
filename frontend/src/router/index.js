@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import About from '../views/About.vue'
+import Clear from '../views/Clear.vue'
 
 Vue.use(VueRouter)
 
@@ -20,6 +21,11 @@ const routes = [
     // component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
     component: About,
   },
+  {
+    path: '/clear',
+    name: 'Clear',
+    component: Clear,
+  }
 ]
 
 const router = new VueRouter({

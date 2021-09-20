@@ -22,9 +22,9 @@
                 <v-list-item-title>HOME</v-list-item-title>
               </v-list-item>
             </router-link>
-            <router-link to="/about">
+            <router-link to="/clear">
               <v-list-item>
-                <v-list-item-title>ABOUT</v-list-item-title>
+                <v-list-item-title>CLEAR</v-list-item-title>
               </v-list-item>
             </router-link>
             <v-list-item>
