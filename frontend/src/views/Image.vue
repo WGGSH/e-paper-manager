@@ -10,6 +10,23 @@
     <v-btn @click="onClickUpload">
       アップロードする
     </v-btn>
+
+    <div v-if="imgSrc !== ''">
+      <vue-cropper
+        ref="cropper"
+        :guides="true"
+        :view-mode="2"
+        :auto-crop-area="0.5"
+        :min-container-width="500"
+        :min-container-height="500"
+        :background="true"
+        :rotatable="false"
+        :src="imgSrc"
+        :img-style="{ 'width': '500px', 'height': '500px' }"
+        :aspect-ratio="targetWidth / targetHeight"
+        drag-mode="crop"
+      />
+    </div>
     <!-- <v-btn @click="upload"> -->
     <!--   <label v-if="!value" class="upload-content-space user-photo default"> -->
     <!--     <input ref="file" class="file-button" type="file" @change="upload" /> -->
@@ -27,66 +44,93 @@
 </template>
 
 <script>
-  const axios = require('axios')
+import VueCropper from 'vue-cropperjs'
+const axios = require('axios')
 
-  export default {
-    name: 'Image',
+export default {
+  name: 'Image',
 
-    data() {
-      return {
-        picture: null,
-        pictureData: null,
+  components: {
+    VueCropper
+  },
+
+  data() {
+    return {
+      picture: null,
+      pictureData: null,
+      imgSrc: '',
+      targetWidth: 600,
+      targetHeight: 448,
+    }
+  },
+
+  methods: {
+    onImagePicked(e) {
+      console.log(e)
+      const file = e
+      this.filename = file.name
+      if (!file.type.includes('image/')) {
+        alert('Please select an image file')
+        return
       }
+      if (typeof FileReader === 'function') {
+        const reader = new FileReader()
+        reader.onload = (event) => {
+          this.imgSrc = event.target.result
+        }
+        reader.readAsDataURL(file)
+      } else {
+        alert('Sorry, FileReader API not supported')
+      }
+      // if (file !== undefined && file !== null) {
+      //   if (file.name.lastIndexOf('.') <= 0) {
+      //     return
+      //   }
+      //   this.pictureData = new Object();
+      //   this.pictureData.type = file.type;
+      //   this.pictureData.fileName = file.name;
+      //   this.readFileAsync(file)
+      //     .then((result) => {
+      //       this.pictureData.data = result
+      //       console.log(result)
+      //       // this.imgSrc = result
+      //     })
+      // }
     },
 
-    methods: {
-      onImagePicked(file) {
-        if (file !== undefined && file !== null) {
-          if (file.name.lastIndexOf('.') <= 0) {
-            return
-          }
-          this.pictureData = new Object();
-          this.pictureData.type = file.type;
-          this.pictureData.fileName = file.name;
-          this.readFileAsync(file)
-            .then((result) => {
-              this.pictureData.data = result
-            })
-        }
-      },
+    onClickUpload() {
+axios
+      // let formData = new FormData()
+      // formData.append(
+      //   "picture",
+      //   new Blob([this.pictureData.data], { type: this.pictureData.type }),
+      //   this.pictureData.fileName
+      // )
+      //
+      // const config = {
+      //   headers: {
+      //     "Content-type": "multipart/form-data",
+      //   }
+      // }
+      //
+      // axios.post('/api/image', formData, config)
+      //   .then((response) => {
+      //     console.log(response)
+      //   }).catch((err) => {
+      //     console.log(err)
+      //   })
+    },
 
-      onClickUpload() {
-        let formData = new FormData()
-        formData.append(
-          "picture",
-          new Blob([this.pictureData.data], { type: this.pictureData.type }),
-          this.pictureData.fileName
-        )
-
-        const config = {
-          headers: {
-            "Content-type": "multipart/form-data",
-          }
-        }
-
-        axios.post('/api/image', formData, config)
-          .then((response) => {
-            console.log(response)
-          }).catch((err) => {
-            console.log(err)
-          })
-      },
-
-      readFileAsync(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            resolve(reader.result);
-          };
-          reader.onerror = reject;
-          reader.readAsArrayBuffer(file);
-        });
-      },
-    }
+    readFileAsync(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+      });
+    },
   }
+}
 </script>
