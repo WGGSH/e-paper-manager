@@ -7,6 +7,9 @@
       show-size
       @change="onImagePicked"
     > </v-file-input>
+    <v-btn @click="rotate">
+      時計回りに回転
+    </v-btn>
     <v-btn @click="onClickUpload">
       アップロードする
     </v-btn>
@@ -20,7 +23,7 @@
         :min-container-width="500"
         :min-container-height="500"
         :background="true"
-        :rotatable="false"
+        :rotatable="true"
         :src="imgSrc"
         :img-style="{ 'width': '500px', 'height': '500px' }"
         :aspect-ratio="targetWidth / targetHeight"
@@ -77,36 +80,59 @@ export default {
         const reader = new FileReader()
         reader.onload = (event) => {
           this.imgSrc = event.target.result
+          console.log(this.$refs)
+          console.log(this.$refs.cropper)
+          // this.$refs.cropper.rotate(90)
         }
         reader.readAsDataURL(file)
       } else {
         alert('Sorry, FileReader API not supported')
       }
-      // if (file !== undefined && file !== null) {
-      //   if (file.name.lastIndexOf('.') <= 0) {
-      //     return
-      //   }
-      //   this.pictureData = new Object();
-      //   this.pictureData.type = file.type;
-      //   this.pictureData.fileName = file.name;
-      //   this.readFileAsync(file)
-      //     .then((result) => {
-      //       this.pictureData.data = result
-      //       console.log(result)
-      //       // this.imgSrc = result
-      //     })
-      // }
+      if (file !== undefined && file !== null) {
+        if (file.name.lastIndexOf('.') <= 0) {
+          return
+        }
+        this.pictureData = new Object();
+        this.pictureData.type = file.type;
+        this.pictureData.fileName = file.name;
+        this.readFileAsync(file)
+          .then((result) => {
+            this.pictureData.data = result
+            console.log(result)
+            // this.imgSrc = result
+          })
+      }
     },
 
     onClickUpload() {
+      this.$refs.cropper.getCroppedCanvas().toBlob((result) => {
+        let formData = new FormData()
+        formData.append(
+          "picture",
+          result,
+          "image.png"
+        )
+        console.log(formData)
+        const config = {
+          headers: {
+            "Content-type": "multipart/form-data",
+          }
+        }
+        axios.post('/api/image', formData, config)
+          .then((response) => {
+            console.log(response)
+          }).catch((err) => {
+            console.log(err)
+          })
+      })
+      let formData = new FormData()
+      formData.append(
+        "picture",
+        new Blob([this.pictureData.data], { type: this.pictureData.type }),
+        this.pictureData.fileName
+      )
+      console.log(formData)
 axios
-      // let formData = new FormData()
-      // formData.append(
-      //   "picture",
-      //   new Blob([this.pictureData.data], { type: this.pictureData.type }),
-      //   this.pictureData.fileName
-      // )
-      //
       // const config = {
       //   headers: {
       //     "Content-type": "multipart/form-data",
@@ -131,6 +157,11 @@ axios
         reader.readAsArrayBuffer(file);
       });
     },
+
+    rotate() {
+      if(!this.$refs.cropper) return
+      this.$refs.cropper.rotate(90)
+    }
   }
 }
 </script>

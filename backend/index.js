@@ -46,7 +46,7 @@ app.post('/api/image', upload.any(), (req, res) => {
     }
     console.log(`stdout: ${stdout}`)
 
-    exec(`convert ${uploadDir}/${file.originalname} -crop 600x448+0+0 +dither -map ${uploadDir}/map.png -type truecolor ${uploadDir}/image.bmp`, (err, stdout, stderr) => {
+    exec(`convert ${uploadDir}/${file.originalname} -resize 600x448 +dither -map ${uploadDir}/map.png -type truecolor ${uploadDir}/image.bmp`, (err, stdout, stderr) => {
       if (err) {
         console.log(`stderr: ${stderr}`)
         isExecuting = false
