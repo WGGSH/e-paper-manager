@@ -74,3 +74,8 @@ $ npm install
 ```.sh
 $ npm start
 ```
+
+### Imagemagick
+```.sh
+$ sudo apt install imagemagick
+```
