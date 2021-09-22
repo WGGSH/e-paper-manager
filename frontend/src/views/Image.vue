@@ -20,14 +20,13 @@
         :guides="true"
         :view-mode="2"
         :auto-crop-area="0.5"
-        :min-container-width="500"
-        :min-container-height="500"
         :background="true"
         :rotatable="true"
         :src="imgSrc"
-        :img-style="{ 'width': '500px', 'height': '500px' }"
+        :img-style="{ 'width': '100%' }"
         :aspect-ratio="targetWidth / targetHeight"
         drag-mode="crop"
+        class="cropper"
       />
     </div>
     <!-- <v-btn @click="upload"> -->
@@ -165,3 +164,9 @@ axios
   }
 }
 </script>
+
+<style>
+
+.cropper{
+}
+</style>
