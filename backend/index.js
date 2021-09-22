@@ -35,10 +35,8 @@ app.post('/api/image', upload.any(), (req, res) => {
   }
   isExecuting = true
   const file = req.files[0]
-  console.log(`originalname: ${file.originalname}`)
-  console.log(`path: ${file.path}`)
 
-  exec(`mv ${uploadDir}/${file.filename} ${uploadDir}/${file.originalname}`, (err, stdout, stderr) => {
+  exec(`convert ${uploadDir}/${file.filename} -resize 600x448 -map ../map.bmp +dither -type truecolor ${uploadDir}/image.bmp`, (err, stdout, stderr) => {
     if (err) {
       console.log(`stderr: ${stderr}`)
       isExecuting = false
@@ -46,21 +44,21 @@ app.post('/api/image', upload.any(), (req, res) => {
     }
     console.log(`stdout: ${stdout}`)
 
-    exec(`convert ${uploadDir}/${file.originalname} -resize 600x448 +dither -map ${uploadDir}/map.png -type truecolor ${uploadDir}/image.bmp`, (err, stdout, stderr) => {
+    exec(`sudo ../epd -i ${uploadDir}/image.bmp`, (err, stdout, stderr) => {
       if (err) {
         console.log(`stderr: ${stderr}`)
         isExecuting = false
         return
       }
       console.log(`stdout: ${stdout}`)
+      isExecuting = false
 
-      exec(`sudo ../epd -i ${uploadDir}/image.bmp`, (err, stdout, stderr) => {
+      exec(`rm ${uploadDir}/${file.filename}`, (err, stdout, stderr) => {
         if (err) {
           console.log(`stderr: ${stderr}`)
           isExecuting = false
           return
         }
-        console.log(`stdout: ${stdout}`)
         isExecuting = false
         res.send('api finished')
       })
