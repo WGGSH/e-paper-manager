@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <header>
-      <v-app-bar app dark>
+      <v-app-bar app>
         <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
         <v-btn @click="reload">
           <v-toolbar-title>
