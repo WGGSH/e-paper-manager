@@ -1,25 +1,30 @@
 <template>
   <div>
-    <v-file-input
-      v-model="picture"
-      accept="image/*"
-      label="写真を選択"
-      show-size
-      @change="onImagePicked"
-    > </v-file-input>
-    <v-btn @click="rotate">
-      時計回りに回転
-    </v-btn>
-    <v-btn @click="onClickUpload">
-      アップロードする
-    </v-btn>
+  <div v-if="imgSrc == null">
+      <v-file-input
+        v-model="picture"
+        accept="image/*"
+        label="写真を選択"
+        show-size
+        @change="onImagePicked"
+      >
+      </v-file-input>
+    </div>
+    <div v-else>
+      <v-btn @click="rotate">
+        時計回りに回転
+      </v-btn>
+      <v-btn @click="onClickUpload">
+        アップロードする
+      </v-btn>
+    </div>
 
-    <div v-if="imgSrc !== ''">
+    <div v-if="imgSrc !== null">
       <vue-cropper
         ref="cropper"
         :guides="true"
         :view-mode="2"
-        :auto-crop-area="0.5"
+        :auto-crop-area="1.0"
         :background="true"
         :rotatable="true"
         :src="imgSrc"
@@ -29,19 +34,6 @@
         class="cropper"
       />
     </div>
-    <!-- <v-btn @click="upload"> -->
-    <!--   <label v-if="!value" class="upload-content-space user-photo default"> -->
-    <!--     <input ref="file" class="file-button" type="file" @change="upload" /> -->
-    <!--   </label> -->
-    <!--  -->
-    <!--   <div v-if="value" class="uploaded"> -->
-    <!--     <label class="upload-content-space user-photo"> -->
-    <!--     <input ref="file" class="file-button" type="file" @change="upload" /> -->
-    <!--     <img class="user-photo-image" :src="value" /> -->
-    <!--   </label> -->
-    <!-- </div> -->
-    <!-- </v-btn> -->
-    <!-- アップロードする -->
   </div>
 </template>
 
@@ -60,7 +52,7 @@ export default {
     return {
       picture: null,
       pictureData: null,
-      imgSrc: '',
+      imgSrc: null,
       targetWidth: 600,
       targetHeight: 448,
     }
@@ -68,8 +60,12 @@ export default {
 
   methods: {
     onImagePicked(e) {
-      console.log(e)
       const file = e
+      // 画像のキャンセルがされた場合は cropper も非表示にする
+      if (e === null || e === undefined) {
+        this.imgSrc = null
+        return
+      }
       this.filename = file.name
       if (!file.type.includes('image/')) {
         alert('Please select an image file')
@@ -78,11 +74,12 @@ export default {
       if (typeof FileReader === 'function') {
         const reader = new FileReader()
         reader.onload = (event) => {
+          if (this.$refs.cropper){
+              this.imgSrc = event.target.result
+              this.$refs.cropper.setData(this.imgSrc)
+          }
           this.imgSrc = event.target.result
-          console.log(this.$refs)
-          console.log(this.$refs.cropper)
-          // this.$refs.cropper.rotate(90)
-        }
+       }
         reader.readAsDataURL(file)
       } else {
         alert('Sorry, FileReader API not supported')
@@ -97,8 +94,6 @@ export default {
         this.readFileAsync(file)
           .then((result) => {
             this.pictureData.data = result
-            console.log(result)
-            // this.imgSrc = result
           })
       }
     },
@@ -111,7 +106,6 @@ export default {
           result,
           "image.png"
         )
-        console.log(formData)
         const config = {
           headers: {
             "Content-type": "multipart/form-data",
@@ -130,20 +124,6 @@ export default {
         new Blob([this.pictureData.data], { type: this.pictureData.type }),
         this.pictureData.fileName
       )
-      console.log(formData)
-axios
-      // const config = {
-      //   headers: {
-      //     "Content-type": "multipart/form-data",
-      //   }
-      // }
-      //
-      // axios.post('/api/image', formData, config)
-      //   .then((response) => {
-      //     console.log(response)
-      //   }).catch((err) => {
-      //     console.log(err)
-      //   })
     },
 
     readFileAsync(file) {
@@ -164,9 +144,3 @@ axios
   }
 }
 </script>
-
-<style>
-
-.cropper{
-}
-</style>
