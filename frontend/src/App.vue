@@ -27,6 +27,11 @@
                 <v-list-item-title>CLEAR</v-list-item-title>
               </v-list-item>
             </router-link>
+            <router-link to="/upload">
+              <v-list-item>
+                <v-list-item-title>UPLOAD</v-list-item-title>
+              </v-list-item>
+            </router-link>
             <router-link to="/image">
               <v-list-item>
                 <v-list-item-title>IMAGE</v-list-item-title>

@@ -28,7 +28,7 @@ app.post('/api/clear', (req,res) => {
 
 const uploadDir = '../pic'
 const upload = multer({dest: uploadDir})
-app.post('/api/image', upload.any(), (req, res) => {
+app.post('/api/upload', upload.any(), (req, res) => {
   if (isExecuting ===  true){
     res.send('api double requested')
     return;
