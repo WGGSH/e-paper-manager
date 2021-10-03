@@ -1,5 +1,6 @@
 <template>
   <div>
+  <LoadingDialog v-bind:enable="isLoading" v-bind:text="loadingText"/>
   <div v-if="imgSrc == null">
       <v-file-input
         v-model="picture"
@@ -39,13 +40,15 @@
 
 <script>
 import VueCropper from 'vue-cropperjs'
+import LoadingDialog from '../components/LoadingDialog'
 const axios = require('axios')
 
 export default {
   name: 'Image',
 
   components: {
-    VueCropper
+    VueCropper,
+    LoadingDialog,
   },
 
   data() {
@@ -55,6 +58,8 @@ export default {
       imgSrc: null,
       targetWidth: 600,
       targetHeight: 448,
+      isLoading: false,
+      loadingText: '書き換え中...'
     }
   },
 
@@ -111,8 +116,10 @@ export default {
             "Content-type": "multipart/form-data",
           }
         }
+        this.isLoading = true
         axios.post('/api/image', formData, config)
           .then((response) => {
+            this.isLoading = false
             console.log(response)
           }).catch((err) => {
             console.log(err)
