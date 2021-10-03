@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const { exec } = require('child_process')
 const  multer  = require('multer')
+const fs = require('fs')
 
 // app.get('/', (req, res) => res.send('Hello World!'))
 
@@ -63,6 +64,31 @@ app.post('/api/upload', upload.any(), (req, res) => {
         res.send('api finished')
       })
     })
+  })
+})
+
+const localPicDir = '../local_pic'
+app.get('/api/image', (req, res) => {
+  exec(`ls ${localPicDir}`, (err, stdout, stderr) => {
+    if (err) {
+      console.log(`stderr: ${stderr}`)
+      return
+    }
+    console.log(`stdout: ${stdout}`)
+    const result = stdout.split('\n')
+    result.pop()
+    console.log(result)
+    res.send(result)
+  })
+})
+
+app.get('/api/image/:path', (req, res) => {
+  console.log(req.params.path)
+  fs.readFile(`${localPicDir}/${req.params.path}`, (err, data) => {
+    // console.log(req.params.path.split('.').pop())
+    // res.type(req.params.path.split('.').pop())
+    // res.type('bmp')
+    res.send(data)
   })
 })
 
