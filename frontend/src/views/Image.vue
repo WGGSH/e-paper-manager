@@ -22,6 +22,25 @@
           CANCEL
           </v-btn>
         </v-toolbar>
+        <v-btn @click="rotate">
+          時計回りに回転
+        </v-btn>
+        <v-btn @click="onClickUpload">
+          アップロードする
+        </v-btn>
+        <vue-cropper
+          ref="cropper"
+          :guides="true"
+          :view-mode="2"
+          :auto-crop-area="1.0"
+          :background="true"
+          :rotatable="true"
+          :src="imgSrc"
+          :img-style="{ 'width': '100%' }"
+          :aspect-ratio="targetWidth / targetHeight"
+          drag-mode="crop"
+          class="cropper"
+        />
       </v-card>
     </v-dialog>
 
@@ -55,6 +74,7 @@
 </template>
 
 <script>
+import VueCropper from 'vue-cropperjs'
 import LoadingDialog from '../components/LoadingDialog'
 const axios = require('axios')
 
@@ -62,6 +82,7 @@ export default {
   name: 'Image',
 
   components: {
+    VueCropper,
     LoadingDialog,
   },
 
@@ -75,6 +96,9 @@ export default {
       page: 1,
       dialog: false,
       selectPictureName: '',
+      imgSrc: '',
+      targetWidth: 600,
+      targetHeight: 448,
     }
   },
 
@@ -105,24 +129,46 @@ export default {
   methods: {
     cardClicked(name) {
       this.selectPictureName = name
+      if (this.imgSrc!='') {
+        this.imgSrc = this.getImageURL(this.selectPictureName)
+        this.$refs.cropper.replace(this.imgSrc)
+      } else {
+        this.imgSrc = this.getImageURL(this.selectPictureName)
+      }
       this.dialog = true
     },
-    getImage(name) {
-      axios.get(`/api/image/${name}`, {}).then((response) => {
-        console.log(response)
-        return response.data
-      })
+    getImageURL(name) {
+      return `/api/image/${name}`
     },
-    // clear() {
-    //   this.isLoading = true
-    //   axios.post('/api/clear', {
-    //   }).then((response) => {
-    //     this.isLoading = false
-    //     console.log(response)
-    //   }).catch((err) => {
-    //     console.log(err)
-    //   })
-    // }
+
+    rotate() {
+      if(!this.$refs.cropper) return
+      this.$refs.cropper.rotate(90)
+    },
+
+    onClickUpload() {
+      this.$refs.cropper.getCroppedCanvas().toBlob((result) => {
+        let formData = new FormData()
+        formData.append(
+          "picture",
+          result,
+          "image.png"
+        )
+        const config = {
+          headers: {
+            "Content-type": "multipart/form-data",
+          }
+        }
+        this.isLoading = true
+        axios.post('/api/upload', formData, config)
+          .then((response) => {
+            this.isLoading = false
+            console.log(response)
+          }).catch((err) => {
+            console.log(err)
+          })
+      })
+    }
   }
 }
 </script>
