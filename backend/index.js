@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const { exec } = require('child_process')
 const  multer  = require('multer')
+const fs = require('fs')
 
 // app.get('/', (req, res) => res.send('Hello World!'))
 
@@ -28,7 +29,7 @@ app.post('/api/clear', (req,res) => {
 
 const uploadDir = '../pic'
 const upload = multer({dest: uploadDir})
-app.post('/api/image', upload.any(), (req, res) => {
+app.post('/api/upload', upload.any(), (req, res) => {
   if (isExecuting ===  true){
     res.send('api double requested')
     return;
@@ -63,6 +64,26 @@ app.post('/api/image', upload.any(), (req, res) => {
         res.send('api finished')
       })
     })
+  })
+})
+
+const localPicDir = '../local_pic'
+app.get('/api/image', (req, res) => {
+  exec(`ls ${localPicDir}`, (err, stdout, stderr) => {
+    if (err) {
+      console.log(`stderr: ${stderr}`)
+      return
+    }
+    console.log(`stdout: ${stdout}`)
+    const result = stdout.split('\n')
+    result.pop()
+    res.send(result)
+  })
+})
+
+app.get('/api/image/:path', (req, res) => {
+  fs.readFile(`${localPicDir}/${req.params.path}`, (err, data) => {
+    res.send(data)
   })
 })
 
