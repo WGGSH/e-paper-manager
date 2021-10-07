@@ -26,7 +26,7 @@
           時計回りに回転
         </v-btn>
         <v-btn @click="onClickUpload">
-          アップロードする
+          映す
         </v-btn>
         <vue-cropper
           ref="cropper"
@@ -89,7 +89,7 @@ export default {
   data() {
     return {
       isLoading: false,
-      loadingText: '初期化中...',
+      loadingText: '書き換え中...',
       pictureNameList: [],
       imageCol: 2,
       imageRow: 3,
