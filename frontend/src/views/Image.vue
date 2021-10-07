@@ -121,7 +121,6 @@ export default {
 
   created() {
     axios.get('/api/image', {}).then((response) => {
-      console.log(response)
       this.pictureNameList = response.data
     })
   },
@@ -161,9 +160,8 @@ export default {
         }
         this.isLoading = true
         axios.post('/api/upload', formData, config)
-          .then((response) => {
+          .then(() => {
             this.isLoading = false
-            console.log(response)
           }).catch((err) => {
             console.log(err)
           })

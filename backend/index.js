@@ -77,17 +77,12 @@ app.get('/api/image', (req, res) => {
     console.log(`stdout: ${stdout}`)
     const result = stdout.split('\n')
     result.pop()
-    console.log(result)
     res.send(result)
   })
 })
 
 app.get('/api/image/:path', (req, res) => {
-  console.log(req.params.path)
   fs.readFile(`${localPicDir}/${req.params.path}`, (err, data) => {
-    // console.log(req.params.path.split('.').pop())
-    // res.type(req.params.path.split('.').pop())
-    // res.type('bmp')
     res.send(data)
   })
 })
