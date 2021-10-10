@@ -24,7 +24,6 @@ exports.getAccessToken = async () => {
 }
 
 exports.getSharedAlbumList = async (accessToken) => {
-  console.log(accessToken)
   const result = await axios.get('https://photoslibrary.googleapis.com/v1/sharedAlbums', {
     headers: {
       Authorization: `Bearer ${accessToken}`,
