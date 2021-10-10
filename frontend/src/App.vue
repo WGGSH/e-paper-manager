@@ -37,9 +37,11 @@
                 <v-list-item-title>IMAGE</v-list-item-title>
               </v-list-item>
             </router-link>
-            <v-list-item>
-              <v-list-item-title>GOOGLE PHOTO</v-list-item-title>
-            </v-list-item>
+            <router-link to="/google-photos">
+              <v-list-item>
+                <v-list-item-title>GOOGLE PHOTOS</v-list-item-title>
+              </v-list-item>
+            </router-link>
           </v-list-item-group>
         </v-list>
       </v-navigation-drawer>
