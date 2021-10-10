@@ -3,7 +3,12 @@ const axios = require('axios')
 
 const client = JSON.parse(fs.readFileSync('./client.json', 'utf8'))
 
+let accessToken = ''
 exports.getAccessToken = async () => {
+  // TODO: アクセストークンの多重取得は避けられるけど，時間制限を超えると使えなくなってしまう
+  if (accessToken !== '') {
+    return accessToken
+  }
   const result = await axios.post('https://www.googleapis.com/oauth2/v4/token', {
     refresh_token: client.refresh_token,
     client_id: client.client_id,
@@ -14,7 +19,8 @@ exports.getAccessToken = async () => {
     return 'error'
   })
 
-  return result.data.access_token
+  accessToken = result.data.access_token
+  return accessToken
 }
 
 exports.getSharedAlbumList = async (accessToken) => {
