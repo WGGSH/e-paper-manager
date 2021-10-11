@@ -6,6 +6,7 @@ const fs = require('fs')
 const {
   getAccessToken,
   getSharedAlbumList,
+  getAlbumImageList,
 } = require('./google-photos')
 
 // app.get('/', (req, res) => res.send('Hello World!'))
@@ -99,4 +100,10 @@ app.get('/api/photo/album_list', async(req, res) => {
   const token = await getAccessToken()
   const album = await getSharedAlbumList(token)
   res.send(album.sharedAlbums)
+})
+
+app.get('/api/photo/album', async(req, res) => {
+  const token = await getAccessToken()
+  const images = await getAlbumImageList(token, req.query.id, req.query.size)
+  res.send(images.mediaItems)
 })
