@@ -72,13 +72,21 @@ export default {
 
   methods: {
     cardClicked (album) {
-      console.log(album)
+      // this.$router.push(`google-photos/album?id=${album.id} ?count=${album.mediaItemsCount}`)
+      this.$router.push({
+        path: 'google-photos/album',
+        query: {
+          id: album.id,
+          count: album.mediaItemsCount
+        },
+      })
     },
   },
 
   created() {
     axios.get('/api/photo/album_list', {}).then((response) => {
       this.albumList = response.data
+      console.log(response.data)
     })
   }
 }
