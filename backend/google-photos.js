@@ -1,5 +1,8 @@
 const fs = require('fs')
+const childProcess = require('child_process')
 const axios = require('axios')
+const util = require('util');
+const exec = util.promisify(childProcess.exec);
 
 const client = JSON.parse(fs.readFileSync('./client.json', 'utf8'))
 
@@ -50,4 +53,20 @@ exports.getAlbumImageList = async (accessToken, albumId, pageSize, pageToken) =>
     return 'error'
   })
   return result.data
+}
+
+exports.saveAlbumImage = async (accessToken, imageId) => {
+  const result = await axios.get(`https://photoslibrary.googleapis.com/v1/mediaItems/${imageId}`,{
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    }
+  }).catch((err) => {
+    console.log(err)
+    return 'error'
+  })
+  await exec(`wget ${result.data.baseUrl}=w${result.data.mediaMetadata.width}-h${result.data.mediaMetadata.height} -O ../local_pic/image.jpg`).catch((err) => {
+    console.log(err)
+    return 'error'
+  })
+  return 'success'
 }
