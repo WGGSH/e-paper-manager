@@ -53,7 +53,7 @@
           cols="4"
         >
           <v-card
-            @click.stop="cardClicked(picture.baseUrl)"
+            @click.stop="cardClicked(picture)"
           >
             <v-img
               :src="`${picture.baseUrl}`"
@@ -155,14 +155,23 @@ export default {
   },
 
   methods: {
-    cardClicked(url) {
-      if (this.imgSrc!='') {
-        this.imgSrc = url
-        this.$refs.cropper.replace(this.imgSrc)
-      } else {
-        this.imgSrc = url
+    cardClicked: async function(picture) {
+      const result = await axios.get('/api/photo/album/save', {
+        params: {
+          id: picture.id,
+        }
+      })
+      console.log(result)
+      if (result.data === 'success') {
+        const url = '/api/image/image.jpg'
+        if (this.imgSrc!='') {
+          this.imgSrc = url
+          this.$refs.cropper.replace(this.imgSrc)
+        } else {
+          this.imgSrc = url
+        }
+        this.dialog = true
       }
-      this.dialog = true
     },
     getImageURL(name) {
       return `/api/image/${name}`
