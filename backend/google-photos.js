@@ -36,10 +36,11 @@ exports.getSharedAlbumList = async (accessToken) => {
   return result.data
 }
 
-exports.getAlbumImageList = async (accessToken, albumId, pageSize) => {
+exports.getAlbumImageList = async (accessToken, albumId, pageSize, pageToken) => {
   const result = await axios.post('https://photoslibrary.googleapis.com/v1/mediaItems:search', {
     pageSize: pageSize,
     albumId: albumId,
+    pageToken: pageToken,
   }, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -48,6 +49,5 @@ exports.getAlbumImageList = async (accessToken, albumId, pageSize) => {
     console.log(err)
     return 'error'
   })
-  // console.log(result)
   return result.data
 }

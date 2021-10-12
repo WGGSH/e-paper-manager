@@ -118,19 +118,24 @@ export default {
     }
   },
 
-  created() {
-    const loopCount = Math.ceil(this.$route.query.count / this.singlePageNum)
-    console.log(this.$route.query.count)
-    console.log(loopCount)
+  created: async function() {
+    let loopCount = Math.ceil(this.$route.query.count / this.singlePageNum)
     this.pictureNameList = []
-    for (let i=0; i < loopCount; i++){
-      axios.get('/api/photo/album', {
+    let next = ''
+    let tmpArray=[]
+    for(let i=0; i < loopCount; i++) tmpArray[i] = i
+
+    for await (let i of tmpArray) {
+      console.log(i) // XXX: 使う必要ないけど...
+      await axios.get('/api/photo/album', {
         params: {
           id: this.$route.query.id,
           size: this.singlePageNum,
+          next: next,
         },
       }).then((response) => {
-        this.pictureNameList = this.pictureNameList.concat(response.data)
+        this.pictureNameList = this.pictureNameList.concat(response.data.mediaItems)
+        next = response.data.nextPageToken
       })
     }
   },

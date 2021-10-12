@@ -104,6 +104,6 @@ app.get('/api/photo/album_list', async(req, res) => {
 
 app.get('/api/photo/album', async(req, res) => {
   const token = await getAccessToken()
-  const images = await getAlbumImageList(token, req.query.id, req.query.size)
-  res.send(images.mediaItems)
+  const images = await getAlbumImageList(token, req.query.id, req.query.size, req.query.next)
+  res.send(images)
 })
