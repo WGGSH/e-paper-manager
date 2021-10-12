@@ -68,6 +68,9 @@
         v-model="page"
         :length="pageMax"
       ></v-pagination>
+      <div v-if="!isLoaded" class="progress">
+        <v-progress-circular :value="loadedImageRate"></v-progress-circular>
+      </div>
       <!-- {{ pictureNameList }} -->
     </div>
   </div>
@@ -98,6 +101,8 @@ export default {
       imgSrc: '',
       targetWidth: 600,
       targetHeight: 448,
+      loadedPage: 0,
+      maxPage: 1,
     }
   },
 
@@ -115,15 +120,23 @@ export default {
         (this.page-1)*this.singlePageNum,
         this.page * this.singlePageNum
       )
+    },
+
+    loadedImageRate() {
+      return this.loadedPage / this.maxPage * 100
+    },
+
+    isLoaded() {
+      return this.loadedPage == this.maxPage
     }
   },
 
   created: async function() {
-    let loopCount = Math.ceil(this.$route.query.count / this.singlePageNum)
+    this.maxPage = Math.ceil(this.$route.query.count / this.singlePageNum)
     this.pictureNameList = []
     let next = ''
     let tmpArray=[]
-    for(let i=0; i < loopCount; i++) tmpArray[i] = i
+    for(let i=0; i < this.maxPage; i++) tmpArray[i] = i
 
     for await (let i of tmpArray) {
       console.log(i) // XXX: 使う必要ないけど...
@@ -134,6 +147,7 @@ export default {
           next: next,
         },
       }).then((response) => {
+        this.loadedPage ++
         this.pictureNameList = this.pictureNameList.concat(response.data.mediaItems)
         next = response.data.nextPageToken
       })
@@ -189,5 +203,9 @@ export default {
 
 .album {
   padding: 16px;
+}
+
+.progress {
+  text-align: center;
 }
 </style>
