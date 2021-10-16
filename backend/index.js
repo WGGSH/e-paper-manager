@@ -3,6 +3,12 @@ const app = express()
 const { exec } = require('child_process')
 const  multer  = require('multer')
 const fs = require('fs')
+const {
+  getAccessToken,
+  getSharedAlbumList,
+  getAlbumImageList,
+  saveAlbumImage,
+} = require('./google-photos')
 
 // app.get('/', (req, res) => res.send('Hello World!'))
 
@@ -91,3 +97,20 @@ app.listen(8000, () => {
   console.log('Example app listening on port 8000!')
 })
 
+app.get('/api/photo/album_list', async(req, res) => {
+  const token = await getAccessToken()
+  const album = await getSharedAlbumList(token)
+  res.send(album.sharedAlbums)
+})
+
+app.get('/api/photo/album', async(req, res) => {
+  const token = await getAccessToken()
+  const images = await getAlbumImageList(token, req.query.id, req.query.size, req.query.next)
+  res.send(images)
+})
+
+app.get('/api/photo/album/save', async(req, res) => {
+  const token = await getAccessToken()
+  const result = await saveAlbumImage(token, req.query.id)
+  res.send(result)
+})
