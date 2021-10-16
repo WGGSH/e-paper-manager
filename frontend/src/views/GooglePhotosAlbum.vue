@@ -72,6 +72,9 @@
         <v-progress-circular :value="loadedImageRate"></v-progress-circular>
       </div>
     </div>
+    <v-btn @click="onClickBackButton" class="button-back">
+      戻る
+    </v-btn>
   </div>
 </template>
 
@@ -202,7 +205,11 @@ export default {
             console.log(err)
           })
       })
-    }
+    },
+
+    onClickBackButton() {
+      history.back()
+    },
   }
 }
 </script>
@@ -215,5 +222,9 @@ export default {
 
 .progress {
   text-align: center;
+}
+
+.button-back {
+  margin-left: 16px;
 }
 </style>
