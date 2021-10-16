@@ -2,7 +2,6 @@ module.exports = {
   transpileDependencies: [
     'vuetify'
   ],
-
   devServer: {
     proxy: {
       '^/api/': {
@@ -10,13 +9,5 @@ module.exports = {
       }
     },
     https: true,
-  },
-
-  pluginOptions: {
-    webpack: {
-      dir: [
-        './webpack'
-      ]
-    }
   }
 }
