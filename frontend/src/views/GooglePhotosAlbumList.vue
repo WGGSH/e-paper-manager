@@ -27,7 +27,6 @@
         v-model="page"
         :length="pageMax"
       ></v-pagination>
-      <!-- {{ pictureNameList }} -->
     </div>
 
   </div>
@@ -72,7 +71,6 @@ export default {
 
   methods: {
     cardClicked (album) {
-      // this.$router.push(`google-photos/album?id=${album.id} ?count=${album.mediaItemsCount}`)
       this.$router.push({
         path: 'google-photos/album',
         query: {
@@ -83,11 +81,9 @@ export default {
     },
   },
 
-  created() {
-    axios.get('/api/photo/album_list', {}).then((response) => {
-      this.albumList = response.data
-      console.log(response.data)
-    })
+  created: async function() {
+    const response = await axios.get('/api/photo/album_list')
+    this.albumList = response.data
   }
 }
 </script>

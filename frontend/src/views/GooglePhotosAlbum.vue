@@ -71,7 +71,6 @@
       <div v-if="!isLoaded" class="progress">
         <v-progress-circular :value="loadedImageRate"></v-progress-circular>
       </div>
-      <!-- {{ pictureNameList }} -->
     </div>
   </div>
 </template>
@@ -117,7 +116,7 @@ export default {
 
     currentPagePictureList() {
       return this.pictureNameList.slice(
-        (this.page-1)*this.singlePageNum,
+        (this.page - 1) * this.singlePageNum,
         this.page * this.singlePageNum
       )
     },
@@ -138,8 +137,8 @@ export default {
     let tmpArray=[]
     for(let i=0; i < this.maxPage; i++) tmpArray[i] = i
 
-    for await (let i of tmpArray) {
-      console.log(i) // XXX: 使う必要ないけど...
+    for await (const i of tmpArray) {
+      i // XXX: 使う必要ないけど...
       await axios.get('/api/photo/album', {
         params: {
           id: this.$route.query.id,
