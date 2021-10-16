@@ -38,7 +38,7 @@ import LoadingDialog from '../components/LoadingDialog'
 const axios = require('axios')
 
 export default {
-  name: 'GooglePhotos',
+  name: 'GooglePhotosAlbumList',
 
   components: {
     LoadingDialog,

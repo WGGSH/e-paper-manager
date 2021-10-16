@@ -5,7 +5,7 @@ import About from '../views/About.vue'
 import Clear from '../views/Clear.vue'
 import Upload from '../views/Upload.vue'
 import Image from '../views/Image.vue'
-import GooglePhotos from '../views/GooglePhotos.vue'
+import GooglePhotosAlbumList from '../views/GooglePhotosAlbumList.vue'
 import GooglePhotosAlbum from '../views/GooglePhotosAlbum.vue'
 
 Vue.use(VueRouter)
@@ -42,8 +42,8 @@ const routes = [
   },
   {
     path: '/google-photos',
-    name: 'GooglePhotos',
-    component: GooglePhotos,
+    name: 'GooglePhotosAlbumList',
+    component: GooglePhotosAlbumList,
   },
   {
     path: '/google-photos/album',
