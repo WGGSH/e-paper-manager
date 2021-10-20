@@ -22,25 +22,36 @@
           CANCEL
           </v-btn>
         </v-toolbar>
-        <v-btn @click="rotate">
-          時計回りに回転
-        </v-btn>
-        <v-btn @click="onClickUpload">
-          映す
-        </v-btn>
-        <vue-cropper
-          ref="cropper"
-          :guides="true"
-          :view-mode="2"
-          :auto-crop-area="1.0"
-          :background="true"
-          :rotatable="true"
-          :src="imgSrc"
-          :img-style="{ 'width': '100%' }"
-          :aspect-ratio="targetWidth / targetHeight"
-          drag-mode="crop"
-          class="cropper"
-        />
+        <div v-show="isLoadingOriginalSizeImage">
+          <v-btn @click="rotate">
+            時計回りに回転
+          </v-btn>
+          <v-btn @click="onClickUpload">
+            映す
+          </v-btn>
+          <vue-cropper
+            ref="cropper"
+            :guides="true"
+            :view-mode="2"
+            :auto-crop-area="1.0"
+            :background="true"
+            :rotatable="true"
+            :src="imgSrc"
+            :img-style="{ 'width': '100%' }"
+            :aspect-ratio="targetWidth / targetHeight"
+            drag-mode="crop"
+            class="cropper"
+          />
+        </div>
+        <div v-if="!isLoadingOriginalSizeImage">
+          <v-img
+            :src="this.thumbnailImgUrl"
+          >
+          </v-img>
+          <div class="loading-original-image">
+            読込中...
+          </div>
+        </div>
       </v-card>
     </v-dialog>
 
@@ -105,6 +116,8 @@ export default {
       targetHeight: 448,
       loadedPage: 0,
       maxPage: 1,
+      isLoadingOriginalSizeImage: false,
+      thumbnailImgUrl: '',
     }
   },
 
@@ -157,23 +170,31 @@ export default {
   },
 
   methods: {
+    changeImgSrc(src) {
+      if (this.imgSrc != '') {
+        this.imgSrc = src
+        this.$refs.cropper.replace(this.imgSrc)
+      } else {
+        this.imgSrc = src
+      }
+    },
+
+    clearImgSrc() {
+      this.imgSrc = null
+    },
+
     cardClicked: async function(picture) {
-      const result = await axios.get('/api/photo/album/save', {
+      this.isLoadingOriginalSizeImage = false
+      this.clearImgSrc()
+      this.thumbnailImgUrl = picture.baseUrl
+      this.dialog = true
+      await axios.get('/api/photo/album/save', {
         params: {
           id: picture.id,
         }
       })
-      console.log(result)
-      if (result.data === 'success') {
-        const url = '/api/image/image.jpg'
-        if (this.imgSrc!='') {
-          this.imgSrc = url
-          this.$refs.cropper.replace(this.imgSrc)
-        } else {
-          this.imgSrc = url
-        }
-        this.dialog = true
-      }
+      this.isLoadingOriginalSizeImage = true
+      this.changeImgSrc('/api/image/image.jpg')
     },
     getImageURL(name) {
       return `/api/image/${name}`
@@ -226,5 +247,10 @@ export default {
 
 .button-back {
   margin-left: 16px;
+}
+
+.loading-original-image {
+  margin: 16px;
+  text-align: center;
 }
 </style>
