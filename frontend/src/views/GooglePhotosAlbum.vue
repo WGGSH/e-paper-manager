@@ -66,6 +66,9 @@
           <v-card
             @click.stop="cardClicked(picture)"
           >
+            <v-icon x-small color="yellow" class="icon">
+              {{ favoriteText(picture) }}
+            </v-icon>
             <v-img
               :src="`${picture.baseUrl}`"
               aspect-ratio="1.333"
@@ -107,7 +110,7 @@ export default {
       isLoading: false,
       loadingText: '書き換え中...',
       pictureNameList: [],
-      imageCol: 5,
+      imageCol: 4,
       imageRow: 3,
       page: 1,
       dialog: false,
@@ -230,6 +233,10 @@ export default {
 
     onClickBackButton() {
       history.back()
+    },
+
+    favoriteText(picture) {
+      return picture.isFavorite ? 'mdi-star' : 'mdi-star-outline'
     },
   }
 }
