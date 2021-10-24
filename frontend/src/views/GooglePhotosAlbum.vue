@@ -29,6 +29,12 @@
           <v-btn @click="onClickUpload">
             映す
           </v-btn>
+          <v-btn v-if="!isFavoritePicture(clickedPicture)" @click="onClickAddFavorite">
+            お気に入りに登録
+          </v-btn>
+          <v-btn v-else @click="onClickRemoveFavorite">
+            お気に入りを解除
+          </v-btn>
           <vue-cropper
             ref="cropper"
             :guides="true"
@@ -107,6 +113,7 @@ export default {
 
   data() {
     return {
+      albumId: null,
       isLoading: false,
       loadingText: '書き換え中...',
       pictureNameList: [],
@@ -121,6 +128,7 @@ export default {
       maxPage: 1,
       isLoadingOriginalSizeImage: false,
       thumbnailImgUrl: '',
+      clickedPicture: null,
     }
   },
 
@@ -154,13 +162,14 @@ export default {
     this.pictureNameList = []
     let next = ''
     let tmpArray=[]
+    this.albumId = this.$route.query.id
     for(let i=0; i < this.maxPage; i++) tmpArray[i] = i
 
     for await (const i of tmpArray) {
       i // XXX: 使う必要ないけど...
       await axios.get('/api/photo/album', {
         params: {
-          id: this.$route.query.id,
+          id: this.albumId,
           size: this.singlePageNum,
           next: next,
         },
@@ -191,6 +200,7 @@ export default {
       this.clearImgSrc()
       this.thumbnailImgUrl = picture.baseUrl
       this.dialog = true
+      this.clickedPicture = picture
       await axios.get('/api/photo/album/save', {
         params: {
           id: picture.id,
@@ -237,6 +247,33 @@ export default {
 
     favoriteText(picture) {
       return picture.isFavorite ? 'mdi-star' : 'mdi-star-outline'
+    },
+
+    isFavoritePicture(picture) {
+      if (picture === null) return false
+      return picture.isFavorite
+    },
+
+    onClickAddFavorite: async function() {
+      this.clickedPicture.isFavorite = true
+      await axios.post('/api/favorite', {
+        albumId: this.albumId,
+        pictureId: this.clickedPicture.id,
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+
+    onClickRemoveFavorite: async function() {
+      this.clickedPicture.isFavorite = false
+      await axios.delete('/api/favorite', {
+        data: {
+          albumId: this.albumId,
+          pictureId: this.clickedPicture.id,
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
     },
   }
 }
