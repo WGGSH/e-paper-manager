@@ -2,6 +2,13 @@ const express = require('express')
 const app = express()
 const { exec } = require('child_process')
 const  multer  = require('multer')
+const fs = require('fs')
+const {
+  getAccessToken,
+  getSharedAlbumList,
+  getAlbumImageList,
+  saveAlbumImage,
+} = require('./google-photos')
 
 // app.get('/', (req, res) => res.send('Hello World!'))
 
@@ -28,7 +35,7 @@ app.post('/api/clear', (req,res) => {
 
 const uploadDir = '../pic'
 const upload = multer({dest: uploadDir})
-app.post('/api/image', upload.any(), (req, res) => {
+app.post('/api/upload', upload.any(), (req, res) => {
   if (isExecuting ===  true){
     res.send('api double requested')
     return;
@@ -66,7 +73,44 @@ app.post('/api/image', upload.any(), (req, res) => {
   })
 })
 
+const localPicDir = '../local_pic'
+app.get('/api/image', (req, res) => {
+  exec(`ls ${localPicDir}`, (err, stdout, stderr) => {
+    if (err) {
+      console.log(`stderr: ${stderr}`)
+      return
+    }
+    console.log(`stdout: ${stdout}`)
+    const result = stdout.split('\n')
+    result.pop()
+    res.send(result)
+  })
+})
+
+app.get('/api/image/:path', (req, res) => {
+  fs.readFile(`${localPicDir}/${req.params.path}`, (err, data) => {
+    res.send(data)
+  })
+})
+
 app.listen(8000, () => {
   console.log('Example app listening on port 8000!')
 })
 
+app.get('/api/photo/album_list', async(req, res) => {
+  const token = await getAccessToken()
+  const album = await getSharedAlbumList(token)
+  res.send(album.sharedAlbums)
+})
+
+app.get('/api/photo/album', async(req, res) => {
+  const token = await getAccessToken()
+  const images = await getAlbumImageList(token, req.query.id, req.query.size, req.query.next)
+  res.send(images)
+})
+
+app.get('/api/photo/album/save', async(req, res) => {
+  const token = await getAccessToken()
+  const result = await saveAlbumImage(token, req.query.id)
+  res.send(result)
+})

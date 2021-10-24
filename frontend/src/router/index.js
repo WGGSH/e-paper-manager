@@ -3,7 +3,10 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import About from '../views/About.vue'
 import Clear from '../views/Clear.vue'
+import Upload from '../views/Upload.vue'
 import Image from '../views/Image.vue'
+import GooglePhotosAlbumList from '../views/GooglePhotosAlbumList.vue'
+import GooglePhotosAlbum from '../views/GooglePhotosAlbum.vue'
 
 Vue.use(VueRouter)
 
@@ -28,9 +31,24 @@ const routes = [
     component: Clear,
   },
   {
+    path: '/upload',
+    name: 'Upload',
+    component: Upload,
+  },
+  {
     path: '/image',
     name: 'Image',
     component: Image,
+  },
+  {
+    path: '/google-photos',
+    name: 'GooglePhotosAlbumList',
+    component: GooglePhotosAlbumList,
+  },
+  {
+    path: '/google-photos/album',
+    name: 'GooglePhotosAlbum',
+    component: GooglePhotosAlbum,
   },
 ]
 
