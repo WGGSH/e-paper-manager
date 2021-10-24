@@ -106,17 +106,21 @@ app.get('/api/photo/album_list', async(req, res) => {
 app.get('/api/photo/album', async(req, res) => {
   const token = await getAccessToken()
   const images = await getAlbumImageList(token, req.query.id, req.query.size, req.query.next)
-  const favoriteIdList = fs.readFileSync('./data/favorite', 'utf-8').split('\n')
-  images.mediaItems.forEach((item) => {
-    let result = false
-    favoriteIdList.forEach((id) => {
-      if (item.id === id) {
-        result = true
-        return
-      }
+  try {
+    const favoriteIdList = fs.readFileSync(`./data/${req.query.id}`, 'utf-8').split('\n')
+    images.mediaItems.forEach((item) => {
+      let result = false
+      favoriteIdList.forEach((id) => {
+        if (item.id === id) {
+          result = true
+          return
+        }
+      })
+      item.isFavorite = result
     })
-    item.isFavorite = result
-  })
+  } catch (err) {
+    fs.writeFileSync(`./data/${req.query.id}`, '')
+  }
   res.send(images)
 })
 
