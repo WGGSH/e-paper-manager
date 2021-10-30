@@ -13,10 +13,13 @@ const {
   getAlbumImageList,
   saveAlbumImage,
 } = require('./google-photos')
+const bodyParser = require('body-parser')
 
 // app.get('/', (req, res) => res.send('Hello World!'))
 
 let isExecuting = false
+
+app.use(bodyParser.json())
 
 app.post('/api/clear', (req,res) => {
   if (isExecuting == true) {
@@ -110,6 +113,21 @@ app.get('/api/photo/album_list', async(req, res) => {
 app.get('/api/photo/album', async(req, res) => {
   const token = await getAccessToken()
   const images = await getAlbumImageList(token, req.query.id, req.query.size, req.query.next)
+  try {
+    const favoriteIdList = fs.readFileSync(`./data/${req.query.id}`, 'utf-8').split('\n')
+    images.mediaItems.forEach((item) => {
+      let result = false
+      favoriteIdList.forEach((id) => {
+        if (item.id === id) {
+          result = true
+          return
+        }
+      })
+      item.isFavorite = result
+    })
+  } catch (err) {
+    fs.writeFileSync(`./data/${req.query.id}`, '')
+  }
   res.send(images)
 })
 
@@ -117,6 +135,21 @@ app.get('/api/photo/album/save', async(req, res) => {
   const token = await getAccessToken()
   const result = await saveAlbumImage(token, req.query.id)
   res.send(result)
+})
+
+app.post('/api/favorite', async(req, res) => {
+  let favoriteIdList = []
+  fs.writeFileSync(`./data/${req.body.albumId}`, `\n${req.body.pictureId}`, { flag: 'a' })
+  res.send('success')
+})
+
+app.delete('/api/favorite', async(req, res) => {
+  let favoriteIdList = fs.readFileSync(`./data/${req.body.albumId}`, 'utf-8').split('\n')
+  favoriteIdList = favoriteIdList.filter((value) => {
+    return value !== req.body.pictureId
+  })
+  fs.writeFileSync(`./data/${req.body.albumId}`, favoriteIdList.join('\n'))
+  res.send('success')
 })
 
 app.get('/api/current_version', async(req, res) => {
