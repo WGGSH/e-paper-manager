@@ -1,8 +1,12 @@
 const express = require('express')
 const app = express()
-const { exec } = require('child_process')
+// const { exec } = require('child_process')
 const  multer  = require('multer')
 const fs = require('fs')
+const childProcess = require('child_process')
+const util = require('util');
+const exec = util.promisify(childProcess.exec);
+const semver = require('semver')
 const {
   getAccessToken,
   getSharedAlbumList,
@@ -113,4 +117,29 @@ app.get('/api/photo/album/save', async(req, res) => {
   const token = await getAccessToken()
   const result = await saveAlbumImage(token, req.query.id)
   res.send(result)
+})
+
+app.get('/api/current_version', async(req, res) => {
+  const version = fs.readFileSync('../current_version', 'utf-8')
+  res.send(version)
+})
+
+app.get('/api/latest_version', async(req, res) => {
+  await exec('git fetch').catch((err) => {
+    console.log(err)
+  })
+  const result = await exec('git tag').catch((err) => {
+    console.log(err)
+  })
+  const tags = result.stdout.split('\n')
+  tags.pop()
+  const maxVer = tags.reduce((a, b) => {
+    const va = semver.valid(a)
+    const vb = semver.valid(b)
+    if (va === null) return b
+    if (vb === null) return a
+    if (semver.gt(a, b)) return a
+    else return b
+  })
+  res.send(maxVer)
 })
