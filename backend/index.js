@@ -121,7 +121,6 @@ app.get('/api/photo/album/save', async(req, res) => {
 
 app.get('/api/current_version', async(req, res) => {
   const version = fs.readFileSync('../current_version', 'utf-8')
-  console.log(version)
   res.send(version)
 })
 
