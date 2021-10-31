@@ -73,6 +73,8 @@ $ npm install
 ## 実行方法
 ```.sh
 $ npm start
+or
+$ ./execute.sh
 ```
 
 ### Imagemagick
