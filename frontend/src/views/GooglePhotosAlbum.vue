@@ -117,7 +117,7 @@ export default {
       isLoading: false,
       loadingText: '書き換え中...',
       pictureNameList: [],
-      imageCol: 4,
+      imageCol: 3,
       imageRow: 3,
       page: 1,
       dialog: false,

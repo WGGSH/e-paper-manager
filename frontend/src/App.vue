@@ -49,6 +49,15 @@
     <v-main>
       <router-view/>
     </v-main>
+    <v-footer color="secondary" class="v-footer">
+      <div class="footer">
+      <router-link v-for="menu in footerList" :key="menu" :to="menu.url" class="mx-4">
+        <v-icon size="36px">
+        {{ menu.icon }}
+        </v-icon>
+      </router-link>
+      </div>
+    </v-footer>
   </v-app>
 </template>
 
@@ -59,9 +68,38 @@ export default {
   data: () => {
     return {
       drawer: false,
+      footerList: [
+        {
+          icon: 'mdi-home',
+          url: '/',
+        },
+        {
+          icon: 'mdi-backspace-reverse',
+          url: '/clear',
+        },
+        {
+          icon: 'mdi-camera',
+          url: '/image',
+        },
+        {
+          icon: 'mdi-google-drive',
+          url: 'google-photos',
+        },
+        {
+          icon: 'mdi-history',
+          url: '',
+        },
+      ],
     }
   },
   methods: {
   },
 };
 </script>
+
+<style>
+.footer {
+  margin: auto;
+  margin-bottom: 16px;
+}
+</style>
