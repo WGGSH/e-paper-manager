@@ -80,6 +80,14 @@ app.post('/api/upload', upload.any(), (req, res) => {
   })
 })
 
+app.post('/api/save', upload.any(), async(req, res) => {
+  const file = req.files[0]
+  exec(`mv ${uploadDir}/${file.filename} ../local_pic/${file.filename}`).catch((err) => {
+    console.log(err)
+  })
+  res.send('finished')
+})
+
 const localPicDir = '../local_pic'
 app.get('/api/image', (req, res) => {
   exec(`ls ${localPicDir}`, (err, stdout, stderr) => {
@@ -99,6 +107,13 @@ app.get('/api/image/:path', (req, res) => {
     res.send(data)
   })
 })
+
+app.get('/api/google-photos/image/:path', (req, res) => {
+  fs.readFile(`../google-photos/${req.params.path}`, (err, data) => {
+    res.send(data)
+  })
+})
+
 
 app.listen(8000, () => {
   console.log('Example app listening on port 8000!')

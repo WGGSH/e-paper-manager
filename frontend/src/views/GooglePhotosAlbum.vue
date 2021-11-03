@@ -1,6 +1,13 @@
 <template>
   <div>
     <LoadingDialog v-bind:enable="isLoading" v-bind:text="loadingText"/>
+    <v-dialog v-model="isSaveDialog">
+      <v-card>
+        <v-card-title>
+          保存完了
+        </v-card-title>
+      </v-card>
+    </v-dialog>
 
     <v-dialog
       v-model="dialog"
@@ -34,6 +41,9 @@
           </v-btn>
           <v-btn v-else @click="onClickRemoveFavorite">
             お気に入りを解除
+          </v-btn>
+          <v-btn @click="onClickSave">
+            保存
           </v-btn>
           <vue-cropper
             ref="cropper"
@@ -129,6 +139,7 @@ export default {
       isLoadingOriginalSizeImage: false,
       thumbnailImgUrl: '',
       clickedPicture: null,
+      isSaveDialog: false,
     }
   },
 
@@ -207,7 +218,7 @@ export default {
         }
       })
       this.isLoadingOriginalSizeImage = true
-      this.changeImgSrc('/api/image/image.jpg')
+      this.changeImgSrc('/api/google-photos/image/image.jpg')
     },
     getImageURL(name) {
       return `/api/image/${name}`
@@ -273,6 +284,29 @@ export default {
         }
       }).catch((err) => {
         console.log(err)
+      })
+    },
+
+    onClickSave() {
+      this.$refs.cropper.getCroppedCanvas().toBlob((result) => {
+        let formData = new FormData()
+        formData.append(
+          "picture",
+          result,
+          "image.png"
+        )
+        const config = {
+          headers: {
+            "Content-type": "multipart/form-data",
+          }
+        }
+        axios.post('/api/save', formData, config)
+          .then((response) => {
+            this.isSaveDialog = true
+            console.log(response)
+          }).catch((err) => {
+            console.log(err)
+          })
       })
     },
   }

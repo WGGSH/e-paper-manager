@@ -1,6 +1,13 @@
 <template>
   <div>
   <LoadingDialog v-bind:enable="isLoading" v-bind:text="loadingText"/>
+  <v-dialog v-model="isSaveDialog">
+    <v-card>
+      <v-card-title>
+        保存完了
+      </v-card-title>
+    </v-card>
+  </v-dialog>
   <div v-if="imgSrc == null">
       <v-file-input
         v-model="picture"
@@ -17,6 +24,9 @@
       </v-btn>
       <v-btn @click="onClickUpload">
         アップロードする
+      </v-btn>
+      <v-btn @click="onClickSave">
+        保存
       </v-btn>
     </div>
 
@@ -59,7 +69,8 @@ export default {
       targetWidth: 600,
       targetHeight: 448,
       isLoading: false,
-      loadingText: '書き換え中...'
+      loadingText: '書き換え中...',
+      isSaveDialog: false,
     }
   },
 
@@ -131,6 +142,29 @@ export default {
         new Blob([this.pictureData.data], { type: this.pictureData.type }),
         this.pictureData.fileName
       )
+    },
+
+    onClickSave() {
+      this.$refs.cropper.getCroppedCanvas().toBlob((result) => {
+        let formData = new FormData()
+        formData.append(
+          "picture",
+          result,
+          "image.png"
+        )
+        const config = {
+          headers: {
+            "Content-type": "multipart/form-data",
+          }
+        }
+        axios.post('/api/save', formData, config)
+          .then((response) => {
+            this.isSaveDialog = true
+            console.log(response)
+          }).catch((err) => {
+            console.log(err)
+          })
+      })
     },
 
     readFileAsync(file) {

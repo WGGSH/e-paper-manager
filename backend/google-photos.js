@@ -64,7 +64,7 @@ exports.saveAlbumImage = async (accessToken, imageId) => {
     console.log(err)
     return 'error'
   })
-  await exec(`wget ${result.data.baseUrl}=w${result.data.mediaMetadata.width}-h${result.data.mediaMetadata.height} -O ../local_pic/image.jpg`).catch((err) => {
+  await exec(`wget ${result.data.baseUrl}=w${result.data.mediaMetadata.width}-h${result.data.mediaMetadata.height} -O ../google-photos/image.jpg`).catch((err) => {
     console.log(err)
     return 'error'
   })
