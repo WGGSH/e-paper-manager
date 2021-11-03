@@ -51,7 +51,7 @@
     </v-main>
     <v-footer color="secondary" class="v-footer">
       <div class="footer">
-      <router-link v-for="menu in footerList" :key="menu" :to="menu.url" class="mx-4">
+      <router-link v-for="menu in footerList" :key="menu.icon" :to="menu.url" class="mx-4">
         <v-icon size="36px">
         {{ menu.icon }}
         </v-icon>
@@ -79,15 +79,15 @@ export default {
         },
         {
           icon: 'mdi-camera',
-          url: '/image',
+          url: '/upload',
         },
         {
           icon: 'mdi-google-drive',
           url: 'google-photos',
         },
         {
-          icon: 'mdi-history',
-          url: '',
+          icon: 'mdi-content-save',
+          url: '/image',
         },
       ],
     }

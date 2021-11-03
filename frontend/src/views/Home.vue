@@ -43,7 +43,7 @@
       Safari 下のメニューから， 「HOME 画面に追加」 をしておくと，すぐにアクセスできます
     </p>
 
-    <div class="version">
+    <div v-if="currentVersion" class="version">
       {{ currentVersion.data }}
     </div>
   </div>
