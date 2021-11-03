@@ -1,5 +1,6 @@
 <template>
   <div class="pera">
+    <LoadingDialog v-bind:enable="isLoading" v-bind:text="loadingText"/>
     <v-dialog v-model = "isUpdateDialog">
       <v-card>
         <v-card-title class="secondary">
@@ -43,6 +44,10 @@
       Safari 下のメニューから， 「HOME 画面に追加」 をしておくと，すぐにアクセスできます
     </p>
 
+    <v-btn color="secondary" @click="onClickRandom">
+      ランダム表示
+    </v-btn>
+
     <div v-if="currentVersion" class="version">
       {{ currentVersion.data }}
     </div>
@@ -52,14 +57,23 @@
 <script>
 const axios = require('axios')
 
+import LoadingDialog from '../components/LoadingDialog'
+
 export default {
   name: 'Home',
+
+  components: {
+    LoadingDialog,
+  },
+
   data() {
     return {
       currentVersion: null,
       latestVersion: null,
       isUpdateDialog: false,
       isUpdatingDialog: false,
+      isLoading: false,
+      loadingText: '書き換え中...',
     }
   },
   created: async function() {
@@ -73,7 +87,14 @@ export default {
     onClickUpdate() {
       this.isUpdateDialog = false
       this.isUpdatingDialog = true
-    }
+    },
+    onClickRandom: async function() {
+      this.isLoading = true
+      await axios.post('/api/random').catch((err) => {
+        console.log(err)
+      })
+      this.isLoading = false
+    },
   }
 }
 </script>
