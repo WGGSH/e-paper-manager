@@ -47,6 +47,11 @@
                 <v-list-item-title>SETTINGS</v-list-item-title>
               </v-list-item>
             </router-link>
+            <router-link to="/usage">
+              <v-list-item>
+                <v-list-item-title>USAGE</v-list-item-title>
+              </v-list-item>
+            </router-link>
           </v-list-item-group>
         </v-list>
       </v-navigation-drawer>

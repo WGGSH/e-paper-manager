@@ -8,6 +8,7 @@ import Image from '../views/Image.vue'
 import GooglePhotosAlbumList from '../views/GooglePhotosAlbumList.vue'
 import GooglePhotosAlbum from '../views/GooglePhotosAlbum.vue'
 import Settings from '../views/Settings.vue'
+import Usage from '../views/Usage.vue'
 
 Vue.use(VueRouter)
 
@@ -55,6 +56,11 @@ const routes = [
     path: '/settings',
     name: 'Settings',
     component: Settings,
+  },
+  {
+    path: '/usage',
+    name: 'Usage',
+    component: Usage,
   },
 ]
 
