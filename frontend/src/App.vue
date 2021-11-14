@@ -4,7 +4,7 @@
       <v-app-bar app>
         <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
           <v-toolbar-title>
-          Digital E-Paper Photo Frame
+          Digital E-Paper System
           </v-toolbar-title>
       </v-app-bar>
       <v-navigation-drawer
