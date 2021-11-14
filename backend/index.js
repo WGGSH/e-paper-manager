@@ -19,6 +19,12 @@ const bodyParser = require('body-parser')
 
 let isExecuting = false
 
+let globalConfig
+loadConfig = () => {
+  globalConfig = JSON.parse(fs.readFileSync('./config.json', 'utf8'))
+}
+loadConfig()
+
 app.use(bodyParser.json())
 
 app.post('/api/clear', (req,res) => {
@@ -206,5 +212,18 @@ app.post('/api/random', async(req, res) => {
     isExecuting = false
     res.send('failed')
   })
+  res.send('success')
+})
+
+app.get('/api/config', async(req, res) => {
+  const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'))
+  res.send(config)
+})
+
+app.post('/api/config', async(req, res) => {
+  const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+  config[req.body.label] = req.body.value
+  fs.writeFileSync('./config.json', JSON.stringify(config));
+  globalConfig = config
   res.send('success')
 })

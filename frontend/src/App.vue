@@ -42,6 +42,11 @@
                 <v-list-item-title>GOOGLE PHOTOS</v-list-item-title>
               </v-list-item>
             </router-link>
+            <router-link to="/settings">
+              <v-list-item>
+                <v-list-item-title>SETTINGS</v-list-item-title>
+              </v-list-item>
+            </router-link>
           </v-list-item-group>
         </v-list>
       </v-navigation-drawer>
@@ -51,8 +56,8 @@
     </v-main>
     <v-footer color="secondary" class="v-footer">
       <div class="footer">
-      <router-link v-for="menu in footerList" :key="menu.icon" :to="menu.url" class="mx-4">
-        <v-icon size="36px">
+      <router-link v-for="menu in footerList" :key="menu.icon" :to="menu.url" class="mx-3">
+        <v-icon size="30px">
         {{ menu.icon }}
         </v-icon>
       </router-link>
@@ -88,6 +93,10 @@ export default {
         {
           icon: 'mdi-content-save',
           url: '/image',
+        },
+        {
+          icon: 'mdi-cog',
+          url: '/settings',
         },
       ],
     }
