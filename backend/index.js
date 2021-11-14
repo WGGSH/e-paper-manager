@@ -248,3 +248,11 @@ app.post('/api/config', async(req, res) => {
   globalConfig = config
   res.send('success')
 })
+
+app.delete('/api/remove', async(req, res) => {
+  console.log(req.body.name)
+  await exec(`rm ../local_pic/${req.body.name}`).catch((err) => {
+    res.send('failed')
+  })
+  res.send('success')
+})

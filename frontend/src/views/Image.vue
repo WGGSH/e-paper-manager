@@ -28,6 +28,9 @@
         <v-btn @click="onClickUpload">
           映す
         </v-btn>
+        <v-btn @click="onClickRemove">
+          削除
+        </v-btn>
         <vue-cropper
           ref="cropper"
           :guides="true"
@@ -166,7 +169,16 @@ export default {
             console.log(err)
           })
       })
-    }
+    },
+
+    onClickRemove: async function() {
+      await axios.delete('/api/remove', {
+        data: {
+          name: this.selectPictureName
+        }
+      })
+      location.reload()
+    },
   }
 }
 </script>
