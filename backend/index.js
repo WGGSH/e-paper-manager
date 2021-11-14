@@ -29,7 +29,29 @@ loadConfig = () => {
 onBoot = async () => {
   loadConfig()
 
-  if (globalConfig.boot_on_random) {
+  // IP アドレス変更の検知
+  let ipChanged = false
+  if (globalConfig.notify_ip_changed) {
+    const oldIp = fs.readFileSync('./ip', 'utf-8').split('\n')[0]
+    const result = await exec(`hostname -I | awk -F " " '{print $1}'`)
+    const newIp = result.stdout.replace(/\r?\n/g, '')
+    if (oldIp !== newIp) {
+      isExecuting = true
+      await exec(`sudo ../epd -t ${newIp}`).catch((err) => {
+        console.log(err)
+      })
+      isExecuting = false
+    }
+    ipChanged = true
+  }
+
+  // IP アドレスの記録
+  const ipCmd = await exec(`hostname -I | awk -F " " '{print $1}'`)
+  const ip = ipCmd.stdout.replace(/\r?\n/g, '')
+  fs.writeFileSync('./ip', ip)
+
+
+  if (globalConfig.boot_on_random && !ipChanged) {
     if (isExecuting ===  true){
       return;
     }
