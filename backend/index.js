@@ -208,3 +208,15 @@ app.post('/api/random', async(req, res) => {
   })
   res.send('success')
 })
+
+app.get('/api/config', async(req, res) => {
+  const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'))
+  res.send(config)
+})
+
+app.post('/api/config', async(req, res) => {
+  const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+  config[req.body.label] = req.body.value
+  fs.writeFileSync('./config.json', JSON.stringify(config));
+  res.send('success')
+})
