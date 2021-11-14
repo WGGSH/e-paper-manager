@@ -19,11 +19,31 @@ const bodyParser = require('body-parser')
 
 let isExecuting = false
 
+// コンフィグの読み込み
 let globalConfig
 loadConfig = () => {
   globalConfig = JSON.parse(fs.readFileSync('./config.json', 'utf8'))
 }
-loadConfig()
+
+// 起動時の処理
+onBoot = async () => {
+  loadConfig()
+
+  if (globalConfig.boot_on_random) {
+    if (isExecuting ===  true){
+      return;
+    }
+    isExecuting = true
+    const result = await exec('ls ../local_pic')
+    const files = result.stdout.split('\n')
+    files.pop()
+    const file = files[Math.floor(Math.random() * files.length)]
+    await exec(`convert ../local_pic/${file} -resize 600x448 -map ../map.bmp +dither -type truecolor ${uploadDir}/image.bmp`)
+    await exec(`sudo ../epd -i ${uploadDir}/image.bmp`).catch((err) => {
+    })
+  }
+}
+onBoot()
 
 app.use(bodyParser.json())
 
@@ -203,6 +223,7 @@ app.post('/api/random', async(req, res) => {
     res.send('api double requested')
     return;
   }
+  isExecuting = true
   const result = await exec('ls ../local_pic')
   const files = result.stdout.split('\n')
   files.pop()
