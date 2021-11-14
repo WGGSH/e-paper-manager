@@ -70,6 +70,13 @@ $ sudo npm install -g vue-cli
 $ npm install
 ```
 
+## 起動時に自動実行
+
+```/etc/rc.local
+# ↓ を追記
+/home/pi/workspace/git_repos/e-paper-manager/execute.sh
+```
+
 ## 実行方法
 ```.sh
 $ npm start
