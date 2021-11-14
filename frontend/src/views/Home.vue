@@ -28,7 +28,7 @@
       </v-card>
     </v-dialog>
     <h2 class="title">
-      Digital E-Paper Photo Frame
+      Digital E-Paper System
     </h2>
     <p>
       電子ペーパーに好きな写真を映すことのできるアプリです
