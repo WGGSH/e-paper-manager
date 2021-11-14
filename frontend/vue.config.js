@@ -8,6 +8,6 @@ module.exports = {
         target: 'http://localhost:8000',
       }
     },
-    https: true,
+    https: false,
   }
 }
