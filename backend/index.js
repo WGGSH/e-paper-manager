@@ -241,7 +241,7 @@ app.get('/api/latest_version', async(req, res) => {
 })
 
 app.post('/api/update', async(req, res) => {
-  await exec('git -C ../ pull').catch((err) => {
+  await exec('git -C ../ pull origin develop').catch((err) => {
     res.send('failed')
     return
   })
