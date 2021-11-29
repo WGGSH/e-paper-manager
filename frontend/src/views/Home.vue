@@ -11,11 +11,11 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="onClickUpdate">
-            更新
-          </v-btn>
           <v-btn color="secondary" @click="isUpdateDialog = false">
             キャンセル
+          </v-btn>
+          <v-btn color="primary" @click="onClickUpdate">
+            更新
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -84,9 +84,11 @@ export default {
     }
   },
   methods: {
-    onClickUpdate() {
+    onClickUpdate: async function() {
       this.isUpdateDialog = false
       this.isUpdatingDialog = true
+      await axios.post('api/update')
+      this.isUpdatingDialog = false
     },
     onClickRandom: async function() {
       this.isLoading = true

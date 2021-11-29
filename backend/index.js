@@ -240,6 +240,14 @@ app.get('/api/latest_version', async(req, res) => {
   res.send(maxVer)
 })
 
+app.post('/api/update', async(req, res) => {
+  await exec('git -C ../ pull').catch((err) => {
+    res.send('failed')
+    return
+  })
+  res.send('success')
+})
+
 app.post('/api/random', async(req, res) => {
   if (isExecuting ===  true){
     res.send('api double requested')
