@@ -33,6 +33,7 @@ onBoot = async () => {
   let ipChanged = false
   if (globalConfig.notify_ip_changed) {
     const oldIp = fs.readFileSync('./ip', 'utf-8').split('\n')[0]
+    await exec('sleep 3')
     const result = await exec(`hostname -I | awk -F " " '{print $1}'`)
     const newIp = result.stdout.replace(/\r?\n/g, '')
     if (oldIp !== newIp) {
@@ -43,12 +44,12 @@ onBoot = async () => {
       isExecuting = false
     }
     ipChanged = true
+    // IP アドレスの記録
+    // const ipCmd = await exec(`hostname -I | awk -F " " '{print $1}'`)
+    // const ip = ipCmd.stdout.replace(/\r?\n/g, '')
+    fs.writeFileSync('./ip', newIp)
   }
 
-  // IP アドレスの記録
-  const ipCmd = await exec(`hostname -I | awk -F " " '{print $1}'`)
-  const ip = ipCmd.stdout.replace(/\r?\n/g, '')
-  fs.writeFileSync('./ip', ip)
 
 
   if (globalConfig.boot_on_random && !ipChanged) {
