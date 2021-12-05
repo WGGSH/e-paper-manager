@@ -289,5 +289,5 @@ app.delete('/api/remove', async(req, res) => {
 })
 
 app.get('/api/usage', async(req, res) => {
-  res.download('../README.pdf')
+  res.download('../usage.pdf')
 })
