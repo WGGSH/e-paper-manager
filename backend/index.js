@@ -1,11 +1,11 @@
 const express = require('express')
 const app = express()
 // const { exec } = require('child_process')
-const  multer  = require('multer')
+const multer = require('multer')
 const fs = require('fs')
 const childProcess = require('child_process')
-const util = require('util');
-const exec = util.promisify(childProcess.exec);
+const util = require('util')
+const exec = util.promisify(childProcess.exec)
 const semver = require('semver')
 const {
   getAccessToken,
@@ -50,36 +50,35 @@ onBoot = async () => {
     fs.writeFileSync('./ip', newIp)
   }
 
-
-
   if (globalConfig.boot_on_random && !ipChanged) {
-    if (isExecuting ===  true){
-      return;
+    if (isExecuting === true) {
+      return
     }
     isExecuting = true
     const result = await exec('ls ../local_pic')
     const files = result.stdout.split('\n')
     files.pop()
     const file = files[Math.floor(Math.random() * files.length)]
-    await exec(`convert ../local_pic/${file} -resize 600x448 -map ../map.bmp +dither -type truecolor ${uploadDir}/image.bmp`)
-    await exec(`sudo ../epd -i ${uploadDir}/image.bmp`).catch((err) => {
-    })
+    await exec(
+      `convert ../local_pic/${file} -resize 600x448 -map ../map.bmp +dither -type truecolor ${uploadDir}/image.bmp`
+    )
+    await exec(`sudo ../epd -i ${uploadDir}/image.bmp`).catch((err) => {})
   }
 }
 onBoot()
 
 app.use(bodyParser.json())
 
-app.post('/api/clear', (req,res) => {
+app.post('/api/clear', (req, res) => {
   if (isExecuting == true) {
     res.send('api double requested')
-    return;
+    return
   }
   isExecuting = true
   exec('sudo ../epd -c', (err, stdout, stderr) => {
     if (err) {
       console.log(`stderr: ${stderr}`)
-    res.send('api error occured')
+      res.send('api error occured')
       isExecuting = false
       return
     }
@@ -90,50 +89,55 @@ app.post('/api/clear', (req,res) => {
 })
 
 const uploadDir = '../pic'
-const upload = multer({dest: uploadDir})
+const upload = multer({ dest: uploadDir })
 app.post('/api/upload', upload.any(), (req, res) => {
-  if (isExecuting ===  true){
+  if (isExecuting === true) {
     res.send('api double requested')
-    return;
+    return
   }
   isExecuting = true
   const file = req.files[0]
 
-  exec(`convert ${uploadDir}/${file.filename} -resize 600x448 -map ../map.bmp +dither -type truecolor ${uploadDir}/image.bmp`, (err, stdout, stderr) => {
-    if (err) {
-      console.log(`stderr: ${stderr}`)
-      isExecuting = false
-      return
-    }
-    console.log(`stdout: ${stdout}`)
-
-    exec(`sudo ../epd -i ${uploadDir}/image.bmp`, (err, stdout, stderr) => {
+  exec(
+    `convert ${uploadDir}/${file.filename} -resize 600x448 -map ../map.bmp +dither -type truecolor ${uploadDir}/image.bmp`,
+    (err, stdout, stderr) => {
       if (err) {
         console.log(`stderr: ${stderr}`)
         isExecuting = false
         return
       }
       console.log(`stdout: ${stdout}`)
-      isExecuting = false
 
-      exec(`rm ${uploadDir}/${file.filename}`, (err, stdout, stderr) => {
+      exec(`sudo ../epd -i ${uploadDir}/image.bmp`, (err, stdout, stderr) => {
         if (err) {
           console.log(`stderr: ${stderr}`)
           isExecuting = false
           return
         }
+        console.log(`stdout: ${stdout}`)
         isExecuting = false
-        res.send('api finished')
+
+        exec(`rm ${uploadDir}/${file.filename}`, (err, stdout, stderr) => {
+          if (err) {
+            console.log(`stderr: ${stderr}`)
+            isExecuting = false
+            return
+          }
+          isExecuting = false
+          res.send('api finished')
+        })
       })
-    })
-  })
+    }
+  )
 })
 
-app.post('/api/save', upload.any(), async(req, res) => {
+app.post('/api/save', upload.any(), async (req, res) => {
   const file = req.files[0]
-  exec(`mv ${uploadDir}/${file.filename} ../local_pic/${file.filename}`).catch((err) => {
-    console.log(err)
-  })
+  exec(`mv ${uploadDir}/${file.filename} ../local_pic/${file.filename}`).catch(
+    (err) => {
+      console.log(err)
+    }
+  )
   res.send('finished')
 })
 
@@ -163,22 +167,28 @@ app.get('/api/google-photos/image/:path', (req, res) => {
   })
 })
 
-
 app.listen(8000, () => {
   console.log('Example app listening on port 8000!')
 })
 
-app.get('/api/photo/album_list', async(req, res) => {
+app.get('/api/photo/album_list', async (req, res) => {
   const token = await getAccessToken()
   const album = await getSharedAlbumList(token)
   res.send(album.sharedAlbums)
 })
 
-app.get('/api/photo/album', async(req, res) => {
+app.get('/api/photo/album', async (req, res) => {
   const token = await getAccessToken()
-  const images = await getAlbumImageList(token, req.query.id, req.query.size, req.query.next)
+  const images = await getAlbumImageList(
+    token,
+    req.query.id,
+    req.query.size,
+    req.query.next
+  )
   try {
-    const favoriteIdList = fs.readFileSync(`./data/${req.query.id}`, 'utf-8').split('\n')
+    const favoriteIdList = fs
+      .readFileSync(`./data/${req.query.id}`, 'utf-8')
+      .split('\n')
     images.mediaItems.forEach((item) => {
       let result = false
       favoriteIdList.forEach((id) => {
@@ -195,20 +205,24 @@ app.get('/api/photo/album', async(req, res) => {
   res.send(images)
 })
 
-app.get('/api/photo/album/save', async(req, res) => {
+app.get('/api/photo/album/save', async (req, res) => {
   const token = await getAccessToken()
   const result = await saveAlbumImage(token, req.query.id)
   res.send(result)
 })
 
-app.post('/api/favorite', async(req, res) => {
+app.post('/api/favorite', async (req, res) => {
   let favoriteIdList = []
-  fs.writeFileSync(`./data/${req.body.albumId}`, `\n${req.body.pictureId}`, { flag: 'a' })
+  fs.writeFileSync(`./data/${req.body.albumId}`, `\n${req.body.pictureId}`, {
+    flag: 'a',
+  })
   res.send('success')
 })
 
-app.delete('/api/favorite', async(req, res) => {
-  let favoriteIdList = fs.readFileSync(`./data/${req.body.albumId}`, 'utf-8').split('\n')
+app.delete('/api/favorite', async (req, res) => {
+  let favoriteIdList = fs
+    .readFileSync(`./data/${req.body.albumId}`, 'utf-8')
+    .split('\n')
   favoriteIdList = favoriteIdList.filter((value) => {
     return value !== req.body.pictureId
   })
@@ -216,12 +230,12 @@ app.delete('/api/favorite', async(req, res) => {
   res.send('success')
 })
 
-app.get('/api/current_version', async(req, res) => {
+app.get('/api/current_version', async (req, res) => {
   const version = fs.readFileSync('../current_version', 'utf-8')
   res.send(version)
 })
 
-app.get('/api/latest_version', async(req, res) => {
+app.get('/api/latest_version', async (req, res) => {
   await exec('git fetch').catch((err) => {
     console.log(err)
   })
@@ -241,7 +255,7 @@ app.get('/api/latest_version', async(req, res) => {
   res.send(maxVer)
 })
 
-app.post('/api/update', async(req, res) => {
+app.post('/api/update', async (req, res) => {
   await exec('git -C ../ pull origin develop').catch((err) => {
     res.send('failed')
     return
@@ -249,17 +263,19 @@ app.post('/api/update', async(req, res) => {
   res.send('success')
 })
 
-app.post('/api/random', async(req, res) => {
-  if (isExecuting ===  true){
+app.post('/api/random', async (req, res) => {
+  if (isExecuting === true) {
     res.send('api double requested')
-    return;
+    return
   }
   isExecuting = true
   const result = await exec('ls ../local_pic')
   const files = result.stdout.split('\n')
   files.pop()
   const file = files[Math.floor(Math.random() * files.length)]
-  await exec(`convert ../local_pic/${file} -resize 600x448 -map ../map.bmp +dither -type truecolor ${uploadDir}/image.bmp`)
+  await exec(
+    `convert ../local_pic/${file} -resize 600x448 -map ../map.bmp +dither -type truecolor ${uploadDir}/image.bmp`
+  )
   await exec(`sudo ../epd -i ${uploadDir}/image.bmp`).catch((err) => {
     isExecuting = false
     res.send('failed')
@@ -267,20 +283,20 @@ app.post('/api/random', async(req, res) => {
   res.send('success')
 })
 
-app.get('/api/config', async(req, res) => {
+app.get('/api/config', async (req, res) => {
   const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'))
   res.send(config)
 })
 
-app.post('/api/config', async(req, res) => {
-  const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+app.post('/api/config', async (req, res) => {
+  const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'))
   config[req.body.label] = req.body.value
-  fs.writeFileSync('./config.json', JSON.stringify(config));
+  fs.writeFileSync('./config.json', JSON.stringify(config))
   globalConfig = config
   res.send('success')
 })
 
-app.delete('/api/remove', async(req, res) => {
+app.delete('/api/remove', async (req, res) => {
   console.log(req.body.name)
   await exec(`rm ../local_pic/${req.body.name}`).catch((err) => {
     res.send('failed')
@@ -288,6 +304,6 @@ app.delete('/api/remove', async(req, res) => {
   res.send('success')
 })
 
-app.get('/api/usage', async(req, res) => {
-  res.download('../README.pdf')
+app.get('/api/usage', async (req, res) => {
+  res.download('../usage.pdf')
 })
