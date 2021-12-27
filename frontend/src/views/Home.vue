@@ -51,6 +51,16 @@
     <div v-if="currentVersion" class="version">
       {{ currentVersion.data }}
     </div>
+
+    <div class="updates">
+      更新履歴
+
+      <ul>
+        <li v-for="information in updateInformations" :key="information.version">
+          {{ information.version }} {{ information.text }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -74,6 +84,7 @@ export default {
       isUpdatingDialog: false,
       isLoading: false,
       loadingText: '書き換え中...',
+      updateInformations: [],
     }
   },
   created: async function() {
@@ -82,6 +93,8 @@ export default {
     if (this.currentVersion.data.trim() !== this.latestVersion.data.trim()) {
       this.isUpdateDialog = true
     }
+    const updateResult = await axios.get('api/updates')
+    this.updateInformations = updateResult.data
   },
   methods: {
     onClickUpdate: async function() {
