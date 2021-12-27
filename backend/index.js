@@ -291,3 +291,21 @@ app.delete('/api/remove', async(req, res) => {
 app.get('/api/usage', async(req, res) => {
   res.download('../usage.pdf')
 })
+
+app.get('/api/updates', async(req, res) => {
+  const result = await exec('git tag -n').catch((err) => {
+    res.send('failed')
+  })
+  let splitData = result.stdout.split('\n')
+  splitData.pop()
+  const resultData = []
+  splitData.forEach((data) => {
+    const split = data.split(/\s+/)
+    resultData.push({
+      version: split[0],
+      text: split[1],
+    })
+  })
+  console.log(resultData)
+  res.send(resultData)
+})
